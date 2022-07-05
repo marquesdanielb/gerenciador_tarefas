@@ -7,8 +7,14 @@ require "classes/Tarefa.php";
 require "classes/Anexo.php";
 require "classes/RepositorioTarefas.php";
 
-$repositorio_tarefas = new RepositorioTarefas($mysqli);
-$tarefa = $repositorio_tarefas->buscar($_GET['id']);
+$repositorio_tarefas = new RepositorioTarefas($pdo);
+
+try {
+    $tarefa = $repositorio_tarefas->buscar($_GET['id']);
+} catch (Exception $e) {
+    http_response_code(404);
+    echo "Erro ao buscar a tarefa: ".$e->getMessage();
+}
 
 $exibir_tabela = false;
 $tem_erros = false;

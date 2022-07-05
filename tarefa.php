@@ -7,9 +7,15 @@ include "classes/Tarefa.php";
 include "classes/Anexo.php";
 include "classes/RepositorioTarefas.php";
 
-$repositorio_tarefas = new RepositorioTarefas($mysqli);
+$repositorio_tarefas = new RepositorioTarefas($pdo);
 
-$tarefa = $repositorio_tarefas->buscar($_GET['id']);
+try {
+    $tarefa = $repositorio_tarefas->buscar($_GET['id']);    
+} catch (Exception $e) {
+    http_response_code(404);
+    echo "Erro ao buscar a tarefa: ".$e->getMessage();
+    die();
+}
 
 $tem_erros = false;
 $erros_validacao = array();
