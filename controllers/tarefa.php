@@ -1,14 +1,5 @@
 <?php
 
-include "config.php";
-include "banco.php";
-include "ajudantes.php";
-include "classes/Tarefa.php";
-include "classes/Anexo.php";
-include "classes/RepositorioTarefas.php";
-
-$repositorio_tarefas = new RepositorioTarefas($pdo);
-
 try {
     $tarefa = $repositorio_tarefas->buscar($_GET['id']);    
 } catch (Exception $e) {
@@ -44,4 +35,4 @@ if (tem_post()) {
     }
 }
 
-include "template_tarefa.php";
+include __DIR__."/../views/template_tarefa.php";

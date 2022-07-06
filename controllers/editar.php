@@ -1,14 +1,5 @@
 <?php
 
-require "config.php";
-require "banco.php";
-require "ajudantes.php";
-require "classes/Tarefa.php";
-require "classes/Anexo.php";
-require "classes/RepositorioTarefas.php";
-
-$repositorio_tarefas = new RepositorioTarefas($pdo);
-
 try {
     $tarefa = $repositorio_tarefas->buscar($_GET['id']);
 } catch (Exception $e) {
@@ -56,14 +47,9 @@ if (tem_post()) {
 
     if (! $tem_erros) {
         $repositorio_tarefas->atualizar($tarefa);
-
-        if (isset($_POST['lembrete']) && $_POST['lembrete'] == '1') {
-            enviar_email($tarefa);
-        }
-
-        header('Location: tarefas.php');
+        header('Location: index.php?rota=tarefas');
         die();
     }
 }
 
-include "template.php";
+require __DIR__."/../views/template.php";

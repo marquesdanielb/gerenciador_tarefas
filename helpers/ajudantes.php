@@ -9,74 +9,6 @@ function tem_post()
     return false;
 }
 
-function enviar_email($tarefa)
-{
-    include "bibliotecas/PHPMailer/PHPMailerAutoload.php";
-
-    $corpo = preparar_corpo_email($tarefa);
-
-    $email = new PHPMailer();
-
-    $email->isSMTP();
-    $email->Host = "smtp.gmail.com";
-    $email->Port = 587;
-    $email->SMTPSecure = 'tls';
-    $email->SMTPAuth = true;
-    $email->Username = "seuemail@dominio.com";
-    $email->Password = "senhasecreta";
-    $email->setFrom("seuemail@dominio.com", "Avisador de Tarefas");
-    $email->addAddress(EMAIL_NOTIFICACAO);
-    $email->Subject = "Aviso de tarefa: {$tarefa->getNome()}";
-    $email->msgHTML($corpo);
-
-    foreach ($tarefa->getAnexos() as $anexo) {
-        $email->addAttachment("anexos/{$anexo->getArquivo()}");
-    }
-
-    $email->send();
-}
-
-function preparar_corpo_email($tarefa)
-{
-    ob_start();
-    include "template_email.php";
-
-    $corpo = ob_get_contents();
-
-    ob_end_clean();
-
-    return $corpo;
-}
-
-function montar_email() {
-    $tem_anexos = '';
-
-    if (count($anexos) > 0) {
-        $tem_anexos = "<p><strong>Atenção!</strong> Esta tarefa contém anexos!</p>";
-    }
-
-    $corpo = "
-        <html>
-            <head>
-                <meta charset=\"utf-8\" />
-                <title>Gerenciador de Tarefas</title>
-                <link rel=\"stylesheet\" href=\"tarefas.css\" type=\"text/css\" />
-            </head>
-            <body>
-                <h1>Tarefa: {$tarefa['nome']}</h1>
-
-                <p><strong>Concluída:</strong> " . traduz_concluida($tarefa['concluida']) . "</p>
-                <p><strong>Descrição:</strong> " . nl2br($tarefa['descricao']) . "</p>
-                <p><strong>Prazo:</strong> " . traduz_data_para_exibir($tarefa['prazo']) . "</p>
-                <p><strong>Prioridade:</strong> " . traduz_prioridade($tarefa['prioridade']) . "</p>
-
-                {$tem_anexos}
-
-            </body>
-        </html>
-    ";
-}
-
 function tratar_anexo($anexo) {
     $padrao = '/^.+(\.pdf$|\.zip$)$/';
     $resultado = preg_match($padrao, $anexo['name']);
@@ -85,7 +17,7 @@ function tratar_anexo($anexo) {
         return false;
     }
 
-    move_uploaded_file($anexo['tmp_name'], "anexos/{$anexo['name']}");
+    move_uploaded_file($anexo['tmp_name'], __DIR__."/../anexos/{$anexo['name']}");
 
     return true;
 }
