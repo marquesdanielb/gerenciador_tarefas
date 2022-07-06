@@ -1,0 +1,19 @@
+{
+    "name": "daniel/tarefas",
+    "description": "Um sistema de gestão de tarefas",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Tarefas\\Models\\": "models"
+        }
+    },
+    "require": {
+        "phpmailer/phpmailer": "^6.6"
+    },
+    "authors": [
+        {
+            "name": "Daniel Marques Barbosa",
+            "email": "marquesdanielb@gmail.com"
+        }
+    ]
+}
