@@ -1,10 +1,12 @@
 <?php
 
+namespace Tarefas\Models;
+
 class RepositorioTarefas
 {
     private $pdo;
 
-    public function __construct(PDO $pdo)
+    public function __construct(\PDO $pdo)
     {
         $this->pdo = $pdo;
     }
@@ -75,7 +77,7 @@ class RepositorioTarefas
     private function buscar_tarefas(): array
     {
         $sqlBusca = 'SELECT * FROM tarefas';
-        $resultado = $this->pdo->query($sqlBusca, PDO::FETCH_CLASS, 'Tarefa');
+        $resultado = $this->pdo->query($sqlBusca, \PDO::FETCH_CLASS, 'Tarefas\Models\Tarefa');
 
         $tarefas = [];
 
@@ -95,10 +97,10 @@ class RepositorioTarefas
             'id' => $id
         ]);
 
-        $tarefa = $query->fetchObject('Tarefa');
+        $tarefa = $query->fetchObject('Tarefas\Models\Tarefa');
 
         if (!is_object($tarefa)) {
-            throw new Exception("A tarefa com o id {$id} não existe");
+            throw new \Exception("A tarefa com o id {$id} não existe");
             
         }
 
@@ -130,7 +132,7 @@ class RepositorioTarefas
 
         $anexos = [];
 
-        while ($anexo = $query->fetchObject('Anexo')) {
+        while ($anexo = $query->fetchObject('Tarefas\Models\Anexo')) {
             $anexos[] = $anexo;
         }
 
@@ -146,10 +148,10 @@ class RepositorioTarefas
             'id' => $anexo_id
         ]);
         
-        $anexo = $query->fetchObject('Anexo');
+        $anexo = $query->fetchObject('Tarefas\Models\Anexo');
 
         if (!is_object($anexo)) {
-            throw new Exception("O anexo com o id {$anexo_id} não existe");
+            throw new \Exception("O anexo com o id {$anexo_id} não existe");
             
         }
 

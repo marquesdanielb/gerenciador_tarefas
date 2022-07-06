@@ -20,7 +20,7 @@ if (tem_post()) {
     } else {
         $dados_anexo = $_FILES['anexo'];
         if (tratar_anexo($dados_anexo)) {
-            $anexo = new Anexo();
+            $anexo = new Tarefas\Models\Anexo();
             $anexo->setTarefaId($tarefa_id);
             $anexo->setNome($dados_anexo['name']);
             $anexo->setArquivo($dados_anexo['name']);

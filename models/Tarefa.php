@@ -1,5 +1,7 @@
 <?php
 
+namespace Tarefas\Models;
+
 class Tarefa
 {
     private $id = 0;
@@ -49,15 +51,15 @@ class Tarefa
         return $this->descricao;
     }
 
-    public function setPrazo(DateTime|null $prazo)
+    public function setPrazo(\DateTime|null $prazo)
     {
         $this->prazo = $prazo;
     }
 
-    public function getPrazo(): DateTime|null
+    public function getPrazo(): \DateTime|null
     {
         if (is_string($this->prazo) && ! empty($this->prazo)) {
-            $this->prazo = DateTime::createFromFormat("Y-m-d", $this->prazo);
+            $this->prazo = \DateTime::createFromFormat("Y-m-d", $this->prazo);
         } elseif ($this->prazo == "") {
             $this->prazo = null;
         }

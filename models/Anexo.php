@@ -1,5 +1,7 @@
 <?php
 
+namespace Tarefas\Models;
+
 class Anexo
 {
     private $id = 0;

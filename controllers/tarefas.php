@@ -5,7 +5,7 @@ $exibir_tabela = true;
 $tem_erros = false;
 $erros_validacao = [];
 
-$tarefa = new Tarefa();
+$tarefa = new Tarefas\Models\Tarefa();
 $tarefa->setPrioridade(1);
 
 if (tem_post()) {
