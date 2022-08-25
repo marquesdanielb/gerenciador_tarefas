@@ -26,17 +26,6 @@ if (tem_post()) {
         $tarefa->setDescricao('');
     }
 
-    if (isset($_POST['prazo']) && strlen($_POST['prazo']) > 0) {
-        if (validar_data($_POST['prazo'])) {
-            $tarefa->setPrazo(traduz_data_br_para_objeto($_POST['prazo']));
-        } else {
-            $tem_erros = true;
-            $erros_validacao['prazo'] = 'O prazo não é uma data válida!';
-        }
-    } else {
-        $tarefa->setPrazo(null);
-    }
-
     $tarefa->setPrioridade($_POST['prioridade']);
 
     if (isset($_POST['concluida'])) {

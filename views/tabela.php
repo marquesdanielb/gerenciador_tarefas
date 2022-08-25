@@ -2,7 +2,6 @@
     <tr>
         <th>Tarefa</th>
         <th>Descricao</th>
-        <th>Prazo</th>
         <th>Prioridade</th>
         <th>Concluída</th>
         <th>Opções</th>
@@ -16,9 +15,6 @@
             </td>
             <td>
                 <?php echo htmlentities($tarefa->getDescricao()); ?>
-            </td>
-            <td>
-                <?php echo traduz_data_para_exibir($tarefa->getPrazo()); ?>
             </td>
             <td>
                 <?php echo traduz_prioridade($tarefa->getPrioridade()); ?>

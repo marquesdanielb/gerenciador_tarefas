@@ -13,13 +13,6 @@
             Descrição (Opcional):
             <textarea name="descricao"><?php echo htmlentities($tarefa->getDescricao()); ?></textarea>
         </label>
-        <label>
-            Prazo (Opcional):
-            <?php if ($tem_erros && isset($erros_validacao['prazo'])) : ?>
-                <span class="erro"><?php echo $erros_validacao['prazo']; ?></span>
-            <?php endif; ?>
-            <input type="text" name="prazo" value="<?php echo traduz_data_para_exibir($tarefa->getPrazo()); ?>" />
-        </label>
         <fieldset>
             <legend>Prioridade:</legend>
             <input type="radio" name="prioridade" value="1" <?php echo ($tarefa->getPrioridade() == 1) ? 'checked' : ''; ?> /> Baixa

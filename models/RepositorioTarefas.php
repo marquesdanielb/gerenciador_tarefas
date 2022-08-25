@@ -13,43 +13,32 @@ class RepositorioTarefas
 
     public function salvar(Tarefa $tarefa)
     {
-        $prazo = $tarefa->getPrazo();
-
-        if (is_object($prazo)) {
-            $prazo = "'{$prazo->format('Y-m-d')}'";
-        }
 
         $sqlGravar = "
             INSERT INTO tarefas
-            (nome, descricao, prioridade, prazo, concluida)
+            (nome, descricao, prioridade, concluida)
             VALUES
-            (:nome, :descricao, :prioridade, :prazo, :concluida)
+            (:nome, :descricao, :prioridade, :concluida)
         ";
 
         $query = $this->pdo->prepare($sqlGravar);
+        
         $query->execute([
             'nome' => strip_tags($tarefa->getNome()),
             'descricao' => strip_tags($tarefa->getDescricao()),
             'prioridade' => $tarefa->getPrioridade(),
-            'prazo' => $prazo,
-            'concluida' => ($tarefa->getConcluida()) ? 1 : 0,
+            'concluida' => ($tarefa->getConcluida()),
         ]);
     }
 
     public function atualizar(Tarefa $tarefa)
     {
-        $prazo = $tarefa->getPrazo();
-
-        if (is_object($prazo)) {
-            $prazo = "'{$prazo->format('Y-m-d')}'";
-        }
 
         $sqlEditar = "
             UPDATE tarefas SET
                 nome = :nome,
                 descricao = :descricao,
                 prioridade = :prioridade,
-                prazo = :prazo,
                 concluida = :concluida
             WHERE id = :id
         ";
@@ -60,7 +49,6 @@ class RepositorioTarefas
             'nome' => strip_tags($tarefa->getNome()),
             'descricao' => strip_tags($tarefa->getDescricao()),
             'prioridade' => $tarefa->getPrioridade(),
-            'prazo' => $prazo,
             'concluida' => ($tarefa->getConcluida()) ? 1 : 0
         ]);
     }

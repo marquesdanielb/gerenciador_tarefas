@@ -7,7 +7,6 @@ class Tarefa
     private $id = 0;
     private $nome = '';
     private $descricao = '';
-    private $prazo = null;
     private $prioridade = 1;
     private $concluida = false;
 
@@ -49,22 +48,6 @@ class Tarefa
     public function getDescricao(): string
     {
         return $this->descricao;
-    }
-
-    public function setPrazo(\DateTime|null $prazo)
-    {
-        $this->prazo = $prazo;
-    }
-
-    public function getPrazo(): \DateTime|null
-    {
-        if (is_string($this->prazo) && ! empty($this->prazo)) {
-            $this->prazo = \DateTime::createFromFormat("Y-m-d", $this->prazo);
-        } elseif ($this->prazo == "") {
-            $this->prazo = null;
-        }
-
-        return $this->prazo;
     }
 
     public function setPrioridade(int $prioridade)

@@ -1,7 +1,7 @@
 <?php
 
 // Conexão ao banco de dados (MySQL)
-define("BD_USUARIO", "tarefasadmin");
+define("BD_USUARIO", "sistematarefa");
 define("BD_SENHA", "root");
 define("BD_DSN", "mysql:dbname=tarefas;host=127.0.0.1");
 
