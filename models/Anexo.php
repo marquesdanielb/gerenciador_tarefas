@@ -2,9 +2,9 @@
 
 namespace Tarefas\Models;
 
-class Anexo
+class Anexo 
 {
-    private $id = 0;
+    private $id;
     private $tarefa_id = 0;
     private $nome = "";
     private $arquivo = "";
@@ -19,12 +19,12 @@ class Anexo
         return $this->id;
     }
 
-    public function setTarefaId(int $tarefa_id)
+    public function setTarefa_id(int $tarefa_id)
     {
         $this->tarefa_id = $tarefa_id;
     }
 
-    public function getTarefaId(): int
+    public function getTarefa_id(): int
     {
         return $this->tarefa_id;
     }

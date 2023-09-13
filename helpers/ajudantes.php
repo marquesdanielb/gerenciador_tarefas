@@ -1,25 +1,59 @@
 <?php
 
-function tem_post()
+function traduz_prioridade($prioridade)
 {
-    if (count($_POST) > 0) {
-        return true;
+    switch ($prioridade) {
+        case '2':
+            return 'Média';
+            break;
+        case '3':
+            return 'Alta';
+            break;
+        
+        default:
+            return 'Baixa';
+            break;
     }
-
-    return false;
 }
 
-function tratar_anexo($anexo) {
-    $padrao = '/^.+(\.pdf$|\.zip$)$/';
-    $resultado = preg_match($padrao, $anexo['name']);
-
-    if (! $resultado) {
-        return false;
+function traduz_concluida($concluida)
+{
+    if ($concluida == 0) {
+        return 'Não';
     }
 
-    move_uploaded_file($anexo['tmp_name'], __DIR__."/../anexos/{$anexo['name']}");
+    return 'Sim';
+}
 
-    return true;
+function traduz_prazo_para_banco($prazo)
+{
+    if ($prazo == '') {
+        return '';
+    }
+
+    $partes = explode('/', $prazo);
+
+    if (count($partes) != 3) {
+        return $prazo;
+    }
+
+    $objeto_data = DateTime::createFromFormat('d/m/Y', $prazo);
+
+    return $objeto_data->format('Y-m-d');    
+}
+
+function traduz_prazo_para_exibir($prazo_banco)
+{
+    if ($prazo_banco == '' || $prazo_banco == '0000-00-00') {
+        return '';
+    }
+    
+    return $prazo_banco->format('d/m/Y');
+}
+
+function tem_post()
+{
+    return count($_POST) > 0;
 }
 
 function validar_data($data)
@@ -27,7 +61,7 @@ function validar_data($data)
     $padrao = '/^[0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4}$/';
     $resultado = preg_match($padrao, $data);
 
-    if (! $resultado) {
+    if ($resultado == 0) {
         return false;
     }
 
@@ -37,53 +71,22 @@ function validar_data($data)
     $mes = $dados[1];
     $ano = $dados[2];
 
-    $resultado = checkdate($mes, $dia, $ano);
-
-    return $resultado;
+    return checkdate($mes, $dia, $ano);
 }
 
-function traduz_concluida($concluida)
+function tratar_anexo($anexo)
 {
-    if ($concluida == 1) {
-        return 'Sim';
+    $padrao = '/^.+(\.pdf|\.zip)$/';
+    $resultado = preg_match($padrao, $anexo['name']);
+
+    if ($resultado == 0) {
+        return false;
     }
 
-    return 'Não';
-}
+    move_uploaded_file($anexo['tmp_name'], 
+                        "/../anexos/{$anexo['name']}");
 
-function traduz_prioridade($codigo)
-{
-    $prioridade = '';
-    switch ($codigo) {
-        case 1:
-            $prioridade = 'Baixa';
-            break;
-        case 2:
-            $prioridade = 'Média';
-            break;
-        case 3:
-            $prioridade = 'Alta';
-            break;
-    }
-
-    return $prioridade;
-}
-
-function traduz_data_para_banco($data)
-{
-    if ($data == "") {
-        return "";
-    }
-
-    $dados = explode("/", $data);
-
-    if (count($dados) != 3) {
-        return $data;
-    }
-
-    $data_mysql = "{$dados[2]}-{$dados[1]}-{$dados[0]}";
-
-    return $data_mysql;
+    return true;
 }
 
 function traduz_data_br_para_objeto($data)
@@ -91,33 +94,12 @@ function traduz_data_br_para_objeto($data)
     if ($data == "") {
         return "";
     }
-
+    
     $dados = explode("/", $data);
 
     if (count($dados) != 3) {
         return $data;
     }
 
-    return  DateTime::createFromFormat('d/m/Y', $data);
-}
-
-function traduz_data_para_exibir($data)
-{
-    if (is_object($data) && get_class($data) == "DateTime") {
-        return $data->format("d/m/Y");
-    }
-
-    if ($data == "" OR $data == "0000-00-00") {
-        return "";
-    }
-
-    $dados = explode("-", $data);
-
-    if (count($dados) != 3) {
-        return $data;
-    }
-
-    $data_exibir = "{$dados[2]}/{$dados[1]}/{$dados[0]}";
-
-    return $data_exibir;
+    return DateTime::createFromFormat('d/m/Y', $data);
 }

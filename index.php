@@ -17,6 +17,6 @@ if (array_key_exists("rota", $_GET)) {
 
 if (is_file("controllers/{$rota}.php")) {
     require "controllers/{$rota}.php";
-}else {
+    } else {
     echo "Rota não encontrada";
 }

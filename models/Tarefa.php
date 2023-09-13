@@ -5,27 +5,19 @@ namespace Tarefas\Models;
 class Tarefa
 {
     private $id = 0;
-    private $nome = '';
-    private $descricao = '';
+    private $nome = "";
+    private $descricao = "";
+    private $prazo = null;
     private $prioridade = 1;
-    private $concluida = false;
+    private $concluida  = false;
+    private $anexos = [];
 
-    /**
-     * @var Array de Anexo
-     */
-    private $anexos;
-
-    public function __construct()
+    public function setId($id)
     {
-        $this->anexos = [];
+        $this->id = (int) $id;
     }
 
-    public function setId(int $id)
-    {
-        $this->id = $id;
-    }
-
-    public function getId() : int
+    public function getId(): int
     {
         return $this->id;
     }
@@ -50,9 +42,25 @@ class Tarefa
         return $this->descricao;
     }
 
+    public function setPrazo(\DateTime|null $prazo)
+    {
+        $this->prazo = $prazo;
+    }
+
+    public function getPrazo(): \DateTime|null
+    {
+        if (is_string($this->prazo) && !empty($this->prazo)) {
+            $this->prazo = \DateTime::createFromFormat("Y-m-d", $this->prazo);
+        } elseif ($this->prazo == "") {
+            $this->prazo = null;
+        }
+
+        return $this->prazo;
+    }
+
     public function setPrioridade(int $prioridade)
     {
-        $this->prioridade = $prioridade;
+        $this->prioridade = (int) $prioridade;
     }
 
     public function getPrioridade(): int

@@ -4,56 +4,61 @@ namespace Tarefas\Models;
 
 class RepositorioTarefas
 {
-    private $pdo;
+    public function __construct(
+        private \PDO $pdo
+    ) {}
 
-    public function __construct(\PDO $pdo)
+    public function salvar(Tarefa $tarefa): void 
     {
-        $this->pdo = $pdo;
-    }
+        $prazo = $tarefa->getPrazo();
 
-    public function salvar(Tarefa $tarefa)
-    {
+        if (is_object($prazo)) {
+            $prazo = $prazo->format('Y-m-d');
+        }
 
-        $sqlGravar = "
-            INSERT INTO tarefas
-            (nome, descricao, prioridade, concluida)
-            VALUES
-            (:nome, :descricao, :prioridade, :concluida)
-        ";
+        $sql = "INSERT INTO tarefas
+                    (nome, descricao, prazo, prioridade, concluida)
+                VALUES
+                    (:nome, :descricao, :prazo, :prioridade, :concluida)";
 
-        $query = $this->pdo->prepare($sqlGravar);
-        
+        $query = $this->pdo->prepare($sql);
         $query->execute([
             'nome' => strip_tags($tarefa->getNome()),
             'descricao' => strip_tags($tarefa->getDescricao()),
-            'prioridade' => $tarefa->getPrioridade(),
-            'concluida' => ($tarefa->getConcluida()),
+            'prioridade' => $tarefa->getPrioridade(), 
+            'prazo' => $prazo,
+            'concluida' => ($tarefa->getConcluida()) ? 1 : 0,
         ]);
     }
 
     public function atualizar(Tarefa $tarefa)
     {
+        $prazo = $tarefa->getPrazo();
 
-        $sqlEditar = "
-            UPDATE tarefas SET
-                nome = :nome,
-                descricao = :descricao,
-                prioridade = :prioridade,
-                concluida = :concluida
-            WHERE id = :id
-        ";
+        if (is_object($prazo)) {
+            $prazo = $prazo->format('Y-m-d');
+        }
 
-        $query = $this->pdo->prepare($sqlEditar);
+        $sql = "UPDATE tarefas SET
+                    nome = :nome,
+                    descricao = :descricao,
+                    prazo = :prazo,
+                    prioridade = :prioridade,
+                    concluida = :concluida
+                WHERE id = :id";
+        
+        $query = $this->pdo->prepare($sql);
         $query->execute([
-            'id' => $tarefa->getId(),
             'nome' => strip_tags($tarefa->getNome()),
             'descricao' => strip_tags($tarefa->getDescricao()),
             'prioridade' => $tarefa->getPrioridade(),
-            'concluida' => ($tarefa->getConcluida()) ? 1 : 0
+            'prazo' => $prazo,
+            'concluida' => ($tarefa->getConcluida()) ? 1 : 0,
+            'id' => $tarefa->getId(),
         ]);
     }
 
-    public function buscar($tarefa_id = 0): Tarefa|array
+    public function buscar(int $tarefa_id = 0): Tarefa|array
     {
         if ($tarefa_id > 0) {
             return $this->buscar_tarefa($tarefa_id);
@@ -64,8 +69,8 @@ class RepositorioTarefas
 
     private function buscar_tarefas(): array
     {
-        $sqlBusca = 'SELECT * FROM tarefas';
-        $resultado = $this->pdo->query($sqlBusca, \PDO::FETCH_CLASS, 'Tarefas\Models\Tarefa');
+        $sql = 'SELECT * FROM tarefas';
+        $resultado = $this->pdo->query($sql, \PDO::FETCH_CLASS, 'Tarefas\Models\Tarefa');
 
         $tarefas = [];
 
@@ -77,19 +82,17 @@ class RepositorioTarefas
         return $tarefas;
     }
 
-    private function buscar_tarefa($id): Tarefa
+    private function buscar_tarefa(int $id): Tarefa
     {
-        $sqlBusca = "SELECT * FROM tarefas WHERE id = :id";
-        $query = $this->pdo->prepare($sqlBusca);
+        $sql = "SELECT * FROM tarefas WHERE id = :id";
+        $query = $this->pdo->prepare($sql);
         $query->execute([
-            'id' => $id
+            'id' => $id,
         ]);
-
         $tarefa = $query->fetchObject('Tarefas\Models\Tarefa');
 
         if (!is_object($tarefa)) {
             throw new \Exception("A tarefa com o id {$id} não existe");
-            
         }
 
         $tarefa->setAnexos($this->buscar_anexos($tarefa->getId()));
@@ -97,70 +100,68 @@ class RepositorioTarefas
         return $tarefa;
     }
 
-    public function salvar_anexo(Anexo $anexo)
+    public function remover(int $id)
     {
-        $sqlGravar = "INSERT INTO anexos
-            (tarefa_id, nome, arquivo)
-            VALUES
-            (:tarefa_id, :nome, :arquivo)";
-
-        $query = $this->pdo->prepare($sqlGravar);
+        $sql = "DELETE FROM tarefas WHERE id = :id";
+        $query = $this->pdo->prepare($sql);
         $query->execute([
-            'tarefa_id' => $anexo->getTarefaId(),
-            'nome' => strip_tags($anexo->getNome()),
-            'arquivo' => strip_tags($anexo->getArquivo()),
+            'id' => $id,
         ]);
     }
-
-    public function buscar_anexos($tarefa_id): array
+    
+    public function buscar_anexos(int $tarefa_id): array
     {
-        $sqlBusca = "SELECT * FROM anexos WHERE tarefa_id = :tarefa_id";
-        $query = $this->pdo->prepare($sqlBusca);
-        $query->execute(["tarefa_id" => $tarefa_id]);
+        $sql = "SELECT * FROM anexos WHERE tarefa_id = :tarefa_id";
+        $query = $this->pdo->prepare($sql);
+        $query->execute([
+            "tarefa_id" => $tarefa_id,
+        ]);
 
         $anexos = [];
 
         while ($anexo = $query->fetchObject('Tarefas\Models\Anexo')) {
-            $anexos[] = $anexo;
+            $anexos[] = $anexo;    
         }
 
         return $anexos;
     }
 
-    public function buscar_anexo(int $anexo_id): Anexo
+    public function buscar_anexo(int $id): Anexo
     {
-        $sqlBusca = "SELECT * FROM anexos WHERE id = :id";
-        
-        $query = $this->pdo->prepare($sqlBusca);
+        $sql = "SELECT * FROM anexos WHERE id = :id";
+        $query = $this->pdo->prepare($sql);
         $query->execute([
-            'id' => $anexo_id
+            'id' => $id,
         ]);
-        
+
         $anexo = $query->fetchObject('Tarefas\Models\Anexo');
 
         if (!is_object($anexo)) {
-            throw new \Exception("O anexo com o id {$anexo_id} não existe");
-            
+            throw new \Exception("O anexo com o id {$id} não existe");
         }
 
         return $anexo;
     }
 
-    public function remover(int $id)
+    public function salvar_anexo(Anexo $anexo)
     {
-        $sqlRemover = "DELETE FROM tarefas WHERE id = :id";
-
-        $query = $this->pdo->prepare($sqlRemover);
+        $sql = "INSERT INTO anexos
+                    (tarefa_id, nome, arquivo)
+                VALUES
+                    (:tarefa_id, :nome, :arquivo)";
+        
+        $query = $this->pdo->prepare($sql);
         $query->execute([
-            'id' => $id
+            'tarefa_id' => $anexo->getTarefa_id(),
+            'nome' => strip_tags($anexo->getNome()),
+            'arquivo' => strip_tags($anexo->getArquivo()),
         ]);
     }
 
-    public function remover_anexo($id)
+    public function remover_anexo(int $id)
     {
-        $sqlRemover = "DELETE FROM anexos WHERE id = :id";
-
-        $query = $this->pdo->prepare($sqlRemover);
+        $sql = "DELETE FROM anexos WHERE id = :id";
+        $query = $this->pdo->prepare($sql);
         $query->execute([
             'id' => $id
         ]);

@@ -1,18 +1,17 @@
-<html>
+<!DOCTYPE html>
+<html lang="pt-BR">
     <head>
-        <meta charset="utf-8" />
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="assets/estilo.css">
         <title>Gerenciador de Tarefas</title>
-        <link rel="stylesheet" href="assets/tarefas.css" type="text/css" />
     </head>
     <body>
-        <div id="bloco_principal">
-            <h1>Gerenciador de Tarefas</h1>
-
-            <?php include('formulario.php'); ?>
-
-            <?php if ($exibir_tabela) : ?>
-                <?php include('tabela.php'); ?>
-            <?php endif; ?>
-        </div>
+        <h1><a href="tarefas.php">Gerenciador de Tarefas</a></h1>
+    
+        <?php require 'formulario.php'; ?>
+    
+        <?php if ($exibir_tabela) : ?>
+            <?php require 'tabela.php'; ?>
+        <?php endif; ?>
     </body>
 </html>

@@ -1,9 +1,6 @@
 <?php
 
-// Conexão ao banco de dados (MySQL)
-define("BD_USUARIO", "sistematarefa");
-define("BD_SENHA", "root");
+//Conexão ao banco de dados (MySQL)
 define("BD_DSN", "mysql:dbname=tarefas;host=127.0.0.1");
-
-// E-mail para notificação
-define("EMAIL_NOTIFICACAO", "meuemail@email.com");
+define("BD_USUARIO", "sistematarefas");
+define("BD_SENHA", "sistema");
